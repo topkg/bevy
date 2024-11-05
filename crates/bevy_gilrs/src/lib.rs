@@ -11,7 +11,7 @@
 //! that handles abstracting over platform-specific gamepad APIs.
 
 mod converter;
-mod gilrs_system;
+pub mod gilrs_system;
 mod rumble;
 
 use bevy_app::{App, Plugin, PostUpdate, PreStartup, PreUpdate};
