@@ -23,7 +23,7 @@ use gilrs_system::{gilrs_event_startup_system, gilrs_event_system};
 use rumble::{play_gilrs_rumble, RunningRumbleEffects};
 
 #[cfg_attr(not(target_arch = "wasm32"), derive(Resource))]
-pub(crate) struct Gilrs(pub SyncCell<gilrs::Gilrs>);
+pub struct Gilrs(pub SyncCell<gilrs::Gilrs>);
 
 /// Plugin that provides gamepad handling to an [`App`].
 #[derive(Default)]
