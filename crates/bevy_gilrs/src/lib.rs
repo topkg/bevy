@@ -11,19 +11,20 @@
 //! that handles abstracting over platform-specific gamepad APIs.
 
 mod converter;
-pub mod gilrs_system;
+mod gilrs_system;
 mod rumble;
 
 use bevy_app::{App, Plugin, PostUpdate, PreStartup, PreUpdate};
 use bevy_ecs::prelude::*;
 use bevy_input::InputSystem;
-use bevy_utils::{synccell::SyncCell, tracing::error};
+use bevy_time::common_conditions::on_timer;
+use bevy_utils::{synccell::SyncCell, tracing::error, Duration};
 use gilrs::GilrsBuilder;
 use gilrs_system::{gilrs_event_startup_system, gilrs_event_system};
 use rumble::{play_gilrs_rumble, RunningRumbleEffects};
 
 #[cfg_attr(not(target_arch = "wasm32"), derive(Resource))]
-pub struct Gilrs(pub SyncCell<gilrs::Gilrs>);
+pub(crate) struct Gilrs(pub SyncCell<gilrs::Gilrs>);
 
 /// Plugin that provides gamepad handling to an [`App`].
 #[derive(Default)]
@@ -48,6 +49,12 @@ impl Plugin for GilrsPlugin {
 
                 app.init_resource::<RunningRumbleEffects>()
                     .add_systems(PreStartup, gilrs_event_startup_system)
+                    .add_systems(
+                        PreUpdate,
+                        gilrs_event_startup_system
+                            .run_if(on_timer(Duration::from_secs(5)))
+                            .before(InputSystem),
+                    )
                     .add_systems(PreUpdate, gilrs_event_system.before(InputSystem))
                     .add_systems(PostUpdate, play_gilrs_rumble.in_set(RumbleSystem));
             }
