@@ -619,6 +619,11 @@ impl<T: Into<Color>> From<T> for StrikethroughColor {
 /// Add to a text entity to draw its text with underline.
 #[derive(Component, Copy, Clone, Debug, Reflect, Default, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize, Clone, Default)]
+pub struct Topline;
+
+/// Add to a text entity to draw its text with underline.
+#[derive(Component, Copy, Clone, Debug, Reflect, Default, Serialize, Deserialize)]
+#[reflect(Serialize, Deserialize, Clone, Default)]
 pub struct Underline;
 
 /// Color for the text's underline. If this component is not present, its `TextColor` will be used.
