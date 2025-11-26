@@ -1307,8 +1307,6 @@ pub fn extract_text_decorations(
             }
 
             if let Some(customlines) = maybe_customline {
-                println!("自定义划线：{:?}", run.clone());
-
                 for customline in &customlines.0 {
                     extracted_uinodes.uinodes.push(ExtractedUiNode {
                         z_order: uinode.stack_index as f32 + stack_z_offsets::TEXT_STRIKETHROUGH,
@@ -1319,7 +1317,7 @@ pub fn extract_text_decorations(
                         transform: transform
                             * Affine2::from_translation(Vec2::new(
                                 run.bounds.center().x,
-                                customline.get_postion(),
+                                run.bounds.min.y + customline.get_postion(),
                             )),
                         item: ExtractedUiItem::Node {
                             color: customline.color.into(),
