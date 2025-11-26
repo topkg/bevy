@@ -90,7 +90,7 @@ pub fn extract_text2d_sprite(
             let transform = *global_transform
                 * GlobalTransform::from_translation(top_left.extend(0.))
                 * scaling
-                * GlobalTransform::from_translation(offset.extend(0.));
+                * GlobalTransform::from_translation(offset.extend(-0.2));
             extracted_sprites.sprites.push(ExtractedSprite {
                 main_entity,
                 render_entity,
@@ -352,7 +352,7 @@ pub fn extract_text2d_sprite(
                     let transform = *global_transform
                         * GlobalTransform::from_translation(top_left.extend(0.))
                         * scaling
-                        * GlobalTransform::from_translation(offset.extend(0.));
+                        * GlobalTransform::from_translation(offset.extend(-0.1));
                     extracted_sprites.sprites.push(ExtractedSprite {
                         main_entity,
                         render_entity,
