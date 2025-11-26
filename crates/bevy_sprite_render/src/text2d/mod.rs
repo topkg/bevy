@@ -15,8 +15,8 @@ use bevy_render::sync_world::TemporaryRenderEntity;
 use bevy_render::Extract;
 use bevy_sprite::{Anchor, Text2dShadow};
 use bevy_text::{
-    ComputedTextBlock, PositionedGlyph, Strikethrough, StrikethroughColor, TextBackgroundColor,
-    TextBounds, TextColor, TextLayoutInfo, Underline, UnderlineColor,
+    ComputedTextBlock, Customlines, PositionedGlyph, Strikethrough, StrikethroughColor,
+    TextBackgroundColor, TextBounds, TextColor, TextLayoutInfo, Underline, UnderlineColor,
 };
 use bevy_transform::prelude::GlobalTransform;
 
@@ -46,6 +46,7 @@ pub fn extract_text2d_sprite(
             &TextColor,
             Has<Strikethrough>,
             Has<Underline>,
+            Option<&Customlines>,
             Option<&StrikethroughColor>,
             Option<&UnderlineColor>,
         )>,
@@ -159,7 +160,7 @@ pub fn extract_text2d_sprite(
 
             for run in text_layout_info.run_geometry.iter() {
                 let section_entity = computed_block.entities()[run.span_index].entity;
-                let Ok((_, has_strikethrough, has_underline, _, _)) =
+                let Ok((_, has_strikethrough, has_underline, _, _, _)) =
                     decoration_query.get(section_entity)
                 else {
                     continue;
@@ -278,6 +279,7 @@ pub fn extract_text2d_sprite(
                 text_color,
                 has_strike_through,
                 has_underline,
+                maybe_customlines,
                 maybe_strikethrough_color,
                 maybe_underline_color,
             )) = decoration_query.get(section_entity)
@@ -338,6 +340,38 @@ pub fn extract_text2d_sprite(
                         custom_size: Some(run.underline_size()),
                     },
                 });
+            }
+
+            if let Some(customlines) = maybe_customlines {
+                for customline in &customlines.0 {
+                    let render_entity = commands.spawn(TemporaryRenderEntity).id();
+                    let offset = Vec2::new(
+                        run.bounds.center().x,
+                        run.bounds.min.y + customline.get_postion(run.bounds.height()),
+                    ) * Vec2::new(1., -1.);
+                    let transform = *global_transform
+                        * GlobalTransform::from_translation(top_left.extend(0.))
+                        * scaling
+                        * GlobalTransform::from_translation(offset.extend(0.));
+                    extracted_sprites.sprites.push(ExtractedSprite {
+                        main_entity,
+                        render_entity,
+                        transform,
+                        color: customline.color.into(),
+                        image_handle_id: AssetId::default(),
+                        flip_x: false,
+                        flip_y: false,
+                        kind: ExtractedSpriteKind::Single {
+                            anchor: Vec2::ZERO,
+                            rect: None,
+                            scaling_mode: None,
+                            custom_size: Some(Vec2::new(
+                                run.bounds.size().x,
+                                customline.thickness as f32,
+                            )),
+                        },
+                    });
+                }
             }
         }
     }
