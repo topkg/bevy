@@ -624,14 +624,18 @@ pub struct Customlines(pub Vec<Customline>);
 #[derive(Clone, Debug, Reflect, Default, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize, Clone, Default)]
 pub struct Customline {
-    pub postion: usize,
+    /// 行高百分比.
+    pub postion_precent: f32,
+    /// 行颜色.
     pub color: Color,
+    /// 行厚度.
     pub thickness: usize,
 }
 
 impl Customline {
-    pub fn get_postion(&self) -> f32 {
-        (self.postion as f32 + self.thickness as f32 * 0.5).round()
+    /// 根据字实际高度动态计算行高.
+    pub fn get_postion(&self, height: f32) -> f32 {
+        (height * self.postion_precent + self.thickness as f32 * 0.5).round()
     }
 }
 

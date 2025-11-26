@@ -1317,7 +1317,7 @@ pub fn extract_text_decorations(
                         transform: transform
                             * Affine2::from_translation(Vec2::new(
                                 run.bounds.center().x,
-                                run.bounds.min.y + customline.get_postion(),
+                                run.bounds.min.y + customline.get_postion(run.bounds.height()),
                             )),
                         item: ExtractedUiItem::Node {
                             color: customline.color.into(),
