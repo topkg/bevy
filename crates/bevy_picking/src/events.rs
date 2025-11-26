@@ -766,7 +766,10 @@ pub fn pointer_events(
                             .flat_map(|h| h.iter().map(|(entity, data)| (*entity, data.to_owned())))
                             .filter(|(hovered_entity, _)| *hovered_entity != *drag_target)
                         {
-                            *state.dragging_over.get_mut(&hovered_entity).unwrap() = hit.clone();
+                            // *state.dragging_over.get_mut(&hovered_entity).unwrap() = hit.clone();
+                            if let Some(value) = state.dragging_over.get_mut(&hovered_entity) {
+                                *value = hit.clone();
+                            }
                             let drag_over_event = Pointer::new(
                                 pointer_id,
                                 location.clone(),
