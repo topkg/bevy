@@ -60,7 +60,7 @@ pub mod prelude {
     #[doc(hidden)]
     pub use crate::{
         Font, Justify, LineBreak, Strikethrough, StrikethroughColor, TextColor, TextError,
-        TextFont, TextLayout, TextSpan, Topline, Underline, UnderlineColor,
+        TextFont, TextLayout, TextSpan, Underline, UnderlineColor,
     };
 }
 

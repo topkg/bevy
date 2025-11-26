@@ -63,8 +63,8 @@ use gradient::GradientPlugin;
 
 use bevy_platform::collections::{HashMap, HashSet};
 use bevy_text::{
-    ComputedTextBlock, PositionedGlyph, Strikethrough, StrikethroughColor, TextBackgroundColor,
-    TextColor, TextLayoutInfo, Underline, UnderlineColor,
+    ComputedTextBlock, Customlines, PositionedGlyph, Strikethrough, StrikethroughColor,
+    TextBackgroundColor, TextColor, TextLayoutInfo, Underline, UnderlineColor,
 };
 use bevy_transform::components::GlobalTransform;
 use box_shadow::BoxShadowPlugin;
@@ -1172,7 +1172,12 @@ pub fn extract_text_decorations(
     >,
     text_background_colors_query: Extract<
         Query<(
-            AnyOf<(&TextBackgroundColor, &Strikethrough, &Underline)>,
+            AnyOf<(
+                &TextBackgroundColor,
+                &Strikethrough,
+                &Underline,
+                &Customlines,
+            )>,
             &TextColor,
             Option<&StrikethroughColor>,
             Option<&UnderlineColor>,
@@ -1207,7 +1212,7 @@ pub fn extract_text_decorations(
         for run in text_layout_info.run_geometry.iter() {
             let section_entity = computed_block.entities()[run.span_index].entity;
             let Ok((
-                (text_background_color, maybe_strikethrough, maybe_underline),
+                (text_background_color, maybe_strikethrough, maybe_underline, maybe_customline),
                 text_color,
                 maybe_strikethrough_color,
                 maybe_underline_color,
@@ -1299,6 +1304,39 @@ pub fn extract_text_decorations(
                     },
                     main_entity: entity.into(),
                 });
+            }
+
+            if let Some(customlines) = maybe_customline {
+                println!("自定义划线：{:?}", run.clone());
+
+                for customline in &customlines.0 {
+                    extracted_uinodes.uinodes.push(ExtractedUiNode {
+                        z_order: uinode.stack_index as f32 + stack_z_offsets::TEXT_STRIKETHROUGH,
+                        render_entity: commands.spawn(TemporaryRenderEntity).id(),
+                        clip: clip.map(|clip| clip.clip),
+                        image: AssetId::default(),
+                        extracted_camera_entity,
+                        transform: transform
+                            * Affine2::from_translation(Vec2::new(
+                                run.bounds.center().x,
+                                customline.get_postion(),
+                            )),
+                        item: ExtractedUiItem::Node {
+                            color: customline.color.into(),
+                            rect: Rect {
+                                min: Vec2::ZERO,
+                                max: Vec2::new(run.bounds.size().x, customline.thickness as f32),
+                            },
+                            atlas_scaling: None,
+                            flip_x: false,
+                            flip_y: false,
+                            border: BorderRect::ZERO,
+                            border_radius: ResolvedBorderRadius::ZERO,
+                            node_type: NodeType::Rect,
+                        },
+                        main_entity: entity.into(),
+                    });
+                }
             }
         }
     }

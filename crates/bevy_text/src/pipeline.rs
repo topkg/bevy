@@ -354,8 +354,6 @@ impl TextPipeline {
                                     strikethrough_thickness: self.glyph_info[section].4,
                                     underline_y: (run.line_y - self.glyph_info[section].5).round(),
                                     underline_thickness: self.glyph_info[section].4,
-                                    topline_y: run.line_top.round(),
-                                    topline_thickness: self.glyph_info[section].4,
                                 });
                                 start = end.max(layout_glyph.x);
                                 current_section = Some(layout_glyph.metadata);
@@ -448,9 +446,15 @@ impl TextPipeline {
                     strikethrough_thickness: self.glyph_info[section].4,
                     underline_y: (run.line_y - self.glyph_info[section].5).round(),
                     underline_thickness: self.glyph_info[section].4,
-                    topline_y: run.line_top.round(),
-                    topline_thickness: self.glyph_info[section].4,
                 });
+
+                println!(
+                    "3: {}, 4: {}, 5:{}, base_line: {}",
+                    self.glyph_info[section].3,
+                    self.glyph_info[section].4,
+                    self.glyph_info[section].5,
+                    run.line_y,
+                );
             }
 
             result
@@ -557,10 +561,6 @@ pub struct RunGeometry {
     pub underline_y: f32,
     /// Underline stroke thickness.
     pub underline_thickness: f32,
-    /// Y position of the underline  in the text layout.
-    pub topline_y: f32,
-    /// topline stroke thickness.
-    pub topline_thickness: f32,
 }
 
 impl RunGeometry {
@@ -588,19 +588,6 @@ impl RunGeometry {
     /// Returns the size of the underline.
     pub fn underline_size(&self) -> Vec2 {
         Vec2::new(self.bounds.size().x, self.underline_thickness)
-    }
-
-    /// Get the center of the underline in the text layout.
-    pub fn topline_position(&self) -> Vec2 {
-        Vec2::new(
-            self.bounds.center().x,
-            self.topline_y + 0.5 * self.topline_thickness,
-        )
-    }
-
-    /// Returns the size of the underline.
-    pub fn topline_size(&self) -> Vec2 {
-        Vec2::new(self.bounds.size().x, self.topline_thickness)
     }
 }
 

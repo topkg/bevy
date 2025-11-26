@@ -616,10 +616,24 @@ impl<T: Into<Color>> From<T> for StrikethroughColor {
     }
 }
 
-/// Add to a text entity to draw its text with underline.
-#[derive(Component, Copy, Clone, Debug, Reflect, Default, Serialize, Deserialize)]
+/// Add to a text entity to draw its text with custom postion and color.
+#[derive(Component, Clone, Debug, Reflect, Default, Serialize, Deserialize)]
+pub struct Customlines(pub Vec<Customline>);
+
+/// custom line.
+#[derive(Clone, Debug, Reflect, Default, Serialize, Deserialize)]
 #[reflect(Serialize, Deserialize, Clone, Default)]
-pub struct Topline;
+pub struct Customline {
+    pub postion: usize,
+    pub color: Color,
+    pub thickness: usize,
+}
+
+impl Customline {
+    pub fn get_postion(&self) -> f32 {
+        (self.postion as f32 + self.thickness as f32 * 0.5).round()
+    }
+}
 
 /// Add to a text entity to draw its text with underline.
 #[derive(Component, Copy, Clone, Debug, Reflect, Default, Serialize, Deserialize)]

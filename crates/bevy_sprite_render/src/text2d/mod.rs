@@ -16,7 +16,7 @@ use bevy_render::Extract;
 use bevy_sprite::{Anchor, Text2dShadow};
 use bevy_text::{
     ComputedTextBlock, PositionedGlyph, Strikethrough, StrikethroughColor, TextBackgroundColor,
-    TextBounds, TextColor, TextLayoutInfo, Topline, Underline, UnderlineColor,
+    TextBounds, TextColor, TextLayoutInfo, Underline, UnderlineColor,
 };
 use bevy_transform::prelude::GlobalTransform;
 
@@ -46,7 +46,6 @@ pub fn extract_text2d_sprite(
             &TextColor,
             Has<Strikethrough>,
             Has<Underline>,
-            Has<Topline>,
             Option<&StrikethroughColor>,
             Option<&UnderlineColor>,
         )>,
@@ -160,7 +159,7 @@ pub fn extract_text2d_sprite(
 
             for run in text_layout_info.run_geometry.iter() {
                 let section_entity = computed_block.entities()[run.span_index].entity;
-                let Ok((_, has_strikethrough, has_underline, has_topline, _, _)) =
+                let Ok((_, has_strikethrough, has_underline, _, _)) =
                     decoration_query.get(section_entity)
                 else {
                     continue;
@@ -206,28 +205,6 @@ pub fn extract_text2d_sprite(
                             rect: None,
                             scaling_mode: None,
                             custom_size: Some(run.underline_size()),
-                        },
-                    });
-                }
-
-                if has_topline {
-                    let render_entity = commands.spawn(TemporaryRenderEntity).id();
-                    let offset = run.topline_position() * Vec2::new(1., -1.);
-                    let transform =
-                        shadow_transform * GlobalTransform::from_translation(offset.extend(0.));
-                    extracted_sprites.sprites.push(ExtractedSprite {
-                        main_entity,
-                        render_entity,
-                        transform,
-                        color,
-                        image_handle_id: AssetId::default(),
-                        flip_x: false,
-                        flip_y: false,
-                        kind: ExtractedSpriteKind::Single {
-                            anchor: Vec2::ZERO,
-                            rect: None,
-                            scaling_mode: None,
-                            custom_size: Some(run.topline_size()),
                         },
                     });
                 }
@@ -301,7 +278,6 @@ pub fn extract_text2d_sprite(
                 text_color,
                 has_strike_through,
                 has_underline,
-                has_topline,
                 maybe_strikethrough_color,
                 maybe_underline_color,
             )) = decoration_query.get(section_entity)
@@ -360,34 +336,6 @@ pub fn extract_text2d_sprite(
                         rect: None,
                         scaling_mode: None,
                         custom_size: Some(run.underline_size()),
-                    },
-                });
-            }
-
-            if has_topline {
-                let color = maybe_underline_color
-                    .map(|c| c.0)
-                    .unwrap_or(text_color.0)
-                    .to_linear();
-                let render_entity = commands.spawn(TemporaryRenderEntity).id();
-                let offset = run.topline_position() * Vec2::new(1., -1.);
-                let transform = *global_transform
-                    * GlobalTransform::from_translation(top_left.extend(0.))
-                    * scaling
-                    * GlobalTransform::from_translation(offset.extend(0.));
-                extracted_sprites.sprites.push(ExtractedSprite {
-                    main_entity,
-                    render_entity,
-                    transform,
-                    color,
-                    image_handle_id: AssetId::default(),
-                    flip_x: false,
-                    flip_y: false,
-                    kind: ExtractedSpriteKind::Single {
-                        anchor: Vec2::ZERO,
-                        rect: None,
-                        scaling_mode: None,
-                        custom_size: Some(run.topline_size()),
                     },
                 });
             }
