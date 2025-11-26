@@ -447,14 +447,6 @@ impl TextPipeline {
                     underline_y: (run.line_y - self.glyph_info[section].5).round(),
                     underline_thickness: self.glyph_info[section].4,
                 });
-
-                println!(
-                    "3: {}, 4: {}, 5:{}, base_line: {}",
-                    self.glyph_info[section].3,
-                    self.glyph_info[section].4,
-                    self.glyph_info[section].5,
-                    run.line_y,
-                );
             }
 
             result
