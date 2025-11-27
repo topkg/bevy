@@ -4531,6 +4531,11 @@ category = "Picking"
 wasm = true
 
 [[example]]
+name = "text2d_picking"
+path = "examples/picking/text2d_picking.rs"
+doc-scrape-examples = true
+
+[[example]]
 name = "animation_masks"
 path = "examples/animation/animation_masks.rs"
 doc-scrape-examples = true

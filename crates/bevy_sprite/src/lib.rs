@@ -15,6 +15,8 @@ mod picking_backend;
 mod sprite;
 #[cfg(feature = "bevy_text")]
 mod text2d;
+#[cfg(feature = "bevy_picking")]
+mod text2d_picking_backend;
 mod texture_slice;
 
 /// The sprite prelude.
@@ -49,6 +51,8 @@ pub use picking_backend::*;
 pub use sprite::*;
 #[cfg(feature = "bevy_text")]
 pub use text2d::*;
+#[cfg(feature = "bevy_picking")]
+pub use text2d_picking_backend::*;
 pub use texture_slice::*;
 
 use bevy_app::prelude::*;
@@ -92,7 +96,7 @@ impl Plugin for SpritePlugin {
         );
 
         #[cfg(feature = "bevy_picking")]
-        app.add_plugins(SpritePickingPlugin);
+        app.add_plugins((SpritePickingPlugin, Text2dPickingPlugin));
     }
 }
 
