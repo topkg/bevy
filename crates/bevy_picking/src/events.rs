@@ -191,6 +191,8 @@ pub struct Click {
     pub hit: HitData,
     /// Duration between the pointer pressed and lifted for this click
     pub duration: Duration,
+    /// 是否是drag同步触发的Click.
+    pub with_drag: bool,
 }
 
 /// Fires while a pointer is moving over the [target entity](EntityEvent::event_target).
@@ -632,6 +634,7 @@ pub fn pointer_events(
                                 button,
                                 hit: hit.clone(),
                                 duration: now - *press_instant,
+                                with_drag: state.dragging.contains_key(&hovered_entity),
                             },
                             hovered_entity,
                         );
